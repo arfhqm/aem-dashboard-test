@@ -1,0 +1,96 @@
+<div class="dashboard-page">
+    <header class="dashboard-topbar">
+        <div class="brand">
+            <h4>Dashboard</h4>
+        </div>
+
+        <button type="button" class="sign-out-link" (click)="logout()">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                    class="sign-out-icon bi bi-box-arrow-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                    <path fill-rule="evenodd"
+                        d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                </svg>
+            </span>
+            <span>Sign Out</span>
+        </button>
+    </header>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h3>Overview</h3>
+            </div>
+        </header>
+
+        <section *ngIf="isLoading" class="alert alert-info">
+            Loading dashboard data...
+        </section>
+
+        <section *ngIf="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+        </section>
+
+        <section *ngIf="!isLoading && !errorMessage" class="dashboard-content">
+            <div class="chart-grid">
+                <article class="content-card">
+                    <div class="brand-bar">
+                        <p>Donut Chart</p>
+                    </div>
+
+                    <div class="card-body-content">
+                        <div class="chart-wrapper">
+                            <canvas id="donutChart"></canvas>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="content-card">
+                    <div class="brand-bar">
+                        <p>Bar Chart</p>
+                    </div>
+
+                    <div class="card-body-content">
+                        <div class="chart-wrapper">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <article class="users-section">
+                <div class="section-header">
+                    <h5>Users List</h5>
+                </div>
+
+                <div class="table-responsive" *ngIf="users.length > 0; else noUsers">
+                    <table class="table users-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th *ngFor="let key of userKeys">
+                                    {{ formatColumnName(key) }}
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr *ngFor="let user of users; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td *ngFor="let key of userKeys">
+                                    {{ user[key] }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <ng-template #noUsers>
+                    <p class="text-muted mb-0">No users found.</p>
+                </ng-template>
+            </article>
+        </section>
+    </main>
+</div>
