@@ -33,10 +33,21 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const token = this.getToken();
-    return !!token && token.trim().length > 0;
+    const isLocalSession = this.isLocalSession();
+
+    return (!!token && token.trim().length > 0) || isLocalSession;
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('localSession');
+  }
+
+  saveLocalSession(): void {
+    localStorage.setItem('localSession', 'true');
+  }
+
+  isLocalSession(): boolean {
+    return localStorage.getItem('localSession') === 'true';
   }
 }

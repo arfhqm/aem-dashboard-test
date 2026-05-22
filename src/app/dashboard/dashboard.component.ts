@@ -51,6 +51,12 @@ export class DashboardComponent implements OnInit {
       },
       error: (error) => {
         if (error.status === 401) {
+          if (this.authService.isLocalSession()) {
+            this.errorMessage = 'Logged in using local PouchDB credentials. Dashboard API requires a valid Bearer token.';
+            this.isLoading = false;
+            return;
+          }
+
           this.authService.logout();
           this.router.navigate(['/login']);
           return;

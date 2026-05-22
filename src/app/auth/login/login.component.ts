@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LocalAuthService } from '../../services/local-auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private localAuthService: LocalAuthService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -40,8 +42,16 @@ export class LoginComponent {
         this.authService.saveToken(token);
         this.router.navigate(['/dashboard']);
       },
-      error: () => {
-        this.errorMessage = 'Invalid email or password. Please try again.';
+      error: async () => {
+        const isLocalValid = await this.localAuthService.validateCredentials(username, password);
+
+        if (isLocalValid) {
+          this.authService.saveLocalSession();
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.errorMessage = 'Invalid email or password. Please try again.';
+        }
+
         this.isLoading = false;
       }
     });
