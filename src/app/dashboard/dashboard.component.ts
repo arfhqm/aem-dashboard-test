@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { AuthService } from '../services/auth.service';
@@ -11,7 +11,7 @@ Chart.register(...registerables);
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   dashboardData: any;
   users: any[] = [];
   userKeys: string[] = [];
@@ -32,15 +32,22 @@ export class DashboardComponent implements OnInit {
     this.loadDashboard();
   }
 
+  ngOnDestroy(): void {
+    if (this.donutChart) {
+      this.donutChart.destroy();
+    }
+
+    if (this.barChart) {
+      this.barChart.destroy();
+    }
+  }
+
   loadDashboard(): void {
     this.dashboardService.getDashboard().subscribe({
       next: (res) => {
         this.dashboardData = res;
         this.users = res.tableUsers || [];
         this.userKeys = this.users.length > 0 ? Object.keys(this.users[0]) : [];
-
-        console.log('Users data:', this.users);
-        console.log('User table keys:', this.userKeys);
 
         setTimeout(() => {
           this.createDonutChart(res.chartDonut || []);
@@ -98,9 +105,7 @@ export class DashboardComponent implements OnInit {
       return Number(rawValue);
     });
 
-    if (this.donutChart) {
-      this.donutChart.destroy();
-    }
+    this.donutChart?.destroy();
 
     this.donutChart = new Chart('donutChart', {
       type: 'doughnut',
@@ -131,8 +136,6 @@ export class DashboardComponent implements OnInit {
   }
 
   createBarChart(data: any[]): void {
-    console.log('Raw bar chart data:', data);
-
     const labels = data.map((item: any, index: number) =>
       item.label ||
       item.Label ||
@@ -168,12 +171,7 @@ export class DashboardComponent implements OnInit {
       return Number(rawValue);
     });
 
-    console.log('Bar chart labels:', labels);
-    console.log('Bar chart values:', values);
-
-    if (this.barChart) {
-      this.barChart.destroy();
-    }
+    this.barChart?.destroy();
 
     this.barChart = new Chart('barChart', {
       type: 'bar',
