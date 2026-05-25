@@ -25,3 +25,22 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## Electron Desktop App
+
+This branch includes an Electron desktop version of the Angular dashboard.
+
+### Features
+
+- Electron desktop wrapper
+- Login required before accessing dashboard
+- Login API integration
+- PouchDB local credential validation fallback
+- Protected dashboard route
+- Dashboard charts and users table
+
+### Run Electron App
+
+```bash
+npm install
+npm run electron
